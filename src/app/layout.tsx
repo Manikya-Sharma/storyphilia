@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Navbar />
-        <div className="h-[100vh]">{children}</div>
+        <div className="cursor-custom h-[100vh]">{children}</div>
       </body>
     </html>
   );
