@@ -6,7 +6,8 @@ export const google_provider = createGoogleGenerativeAI({
 });
 
 // the default model I will use
-export const google_model = google("models/gemini-pro", {
+// Alternative: Use gemini-pro, but it has more restrictions
+export const google_model = google("models/gemini-1.5-flash-latest", {
   safetySettings: [
     {
       category: "HARM_CATEGORY_DANGEROUS_CONTENT",
