@@ -1,36 +1,30 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# storyphilia - your AI powered story writing companion
 
-## Getting Started
+storyphilia is a ai-powered platform which helps you create short stories.
 
-First, run the development server:
+> [!NOTE]
+> This project is only for learning purposes and still in development phase, and is not production ready
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Creative design
+- Different genres
+- Prompt based story generation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Features in next releases
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- Word limit customizable for the final story
+- Extra minor themes for the story
+- Creativity meter
+- Custom API key addition
 
-## Learn More
+## Limitations
 
-To learn more about Next.js, take a look at the following resources:
+- Dependent on google Gemini API key, which imposes some limits in free plan
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Thanks 💙
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Thanks to the following creators for providing many features free of cost
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- [SVG Backgrounds](https://www.svgbackgrounds.com/elements/custom-css-cursors/)
+- Freepic for [romance background](https://www.freepik.com/free-vector/cute-small-love-heart-pattern-wallpaper-textile-fabric-print_135390349.htm#query=love%20pattern&position=1&from_view=keyword&track=ais_hybrid&uuid=ba18dc0b-fae2-4ac4-8622-7e971717583a) and [action background](https://www.freepik.com/free-vector/seamless-pattern-background-with-comic-book-speech-bubbles-vector-illustration_10703304.htm#fromView=search&page=1&position=1&uuid=228c6e6b-6608-4f5f-b477-f8aed6617efa) images
