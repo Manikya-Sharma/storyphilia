@@ -40,7 +40,7 @@ const Page = () => {
       setLoading(false);
       return;
     }
-    if (promptValue.split(" ").length > 50) {
+    if (promptValue.split(" ").length > 100) {
       toast.error("The prompt is too big, consider making it smaller");
       setLoading(false);
       return;
@@ -109,7 +109,9 @@ const Page = () => {
           </div>
         ) : responseGiven ? (
           <div>
-            <h1 className="text-5xl mb-10 text-center">Your story</h1>
+            <h1 className="text-5xl mb-10 text-center">
+              Your {genreValue} story
+            </h1>
             <p>{responseGiven}</p>
             <div className="w-full flex items-center justify-end gap-5">
               <Button
@@ -186,7 +188,7 @@ const Page = () => {
             {/* Prompt */}
 
             <div className="mt-5">
-              <h2 className="font-bold">Describe the story in 50 words</h2>
+              <h2 className="font-bold">Describe the story in 100 words</h2>
               <p
                 className={cn(
                   "text-muted-foreground text-sm dark:text-muted",
