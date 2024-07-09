@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { PencilRuler } from "lucide-react";
+import { Plus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { buttonVariants } from "../ui/button";
@@ -40,8 +40,8 @@ const Navbar = () => {
                 })
               )}
             >
-              <PencilRuler className="size-5 mr-1.5" />
-              Create New
+              <Plus className="size-5 md:mr-1.5" />
+              <span className="hidden md:block">Create New</span>
             </Link>
           </motion.div>
         </div>
