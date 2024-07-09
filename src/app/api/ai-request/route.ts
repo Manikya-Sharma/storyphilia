@@ -9,7 +9,18 @@ export async function POST(req: NextRequest) {
   try {
     const { text } = await generateText({
       model: google_model,
-      prompt: String(body.message),
+      prompt: `
+      I will be giving you a small description about a story on genre ${body.genre}
+
+      You are required to tell me a creative story according to this description.
+
+      The description is as follows:-
+
+      "
+      ${body.message}
+      "
+
+      `,
     });
 
     return NextResponse.json({ message: text });
