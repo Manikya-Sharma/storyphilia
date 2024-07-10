@@ -16,6 +16,8 @@ import { Textarea } from "@/components/ui/textarea";
 import toast, { Toaster } from "react-hot-toast";
 import { GenAiRequest } from "@/types/genai-types";
 
+import Markdown from "react-markdown";
+
 const Page = () => {
   const [open, setOpen] = useState(false);
   const [genreValue, setGenreValue] = useState("");
@@ -84,7 +86,7 @@ const Page = () => {
       <Toaster />
       <div
         className={cn(
-          "w-[90vw] max-w-prose mx-auto rounded-lg shadow-md p-7 border-t",
+          "w-[90vw] max-w-5xl mx-auto rounded-lg shadow-md p-7 border-t",
           {
             "dark glow bg-teal-300 text-teal-950 border-blue-950":
               genreValue === "scifi",
@@ -109,10 +111,9 @@ const Page = () => {
           </div>
         ) : responseGiven ? (
           <div>
-            <h1 className="text-5xl mb-10 text-center">
-              Your {genreValue} story
-            </h1>
-            <p>{responseGiven}</p>
+            <Markdown className="prose dark:text-zinc-200 dark:prose-h2:text-zinc-200 mx-auto">
+              {responseGiven.replace("<br />", "\n")}
+            </Markdown>
             <div className="w-full flex items-center justify-end gap-5">
               <Button
                 className={cn({
