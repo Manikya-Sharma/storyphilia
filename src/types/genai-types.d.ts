@@ -1,6 +1,6 @@
-// TODO: Add more options, like genre etc
-
 export type GenAiRequest = {
   genre: string;
   message: string;
+  max_words: number;
+  creativity: number;
 };

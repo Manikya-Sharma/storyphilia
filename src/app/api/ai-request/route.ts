@@ -10,11 +10,13 @@ export async function POST(req: NextRequest) {
     const { text } = await generateText({
       model: google_model,
       prompt: `
-      I will be giving you a small description about a story on genre ${body.genre}.
+      I will be giving you a small description about a story on genre ${
+        body.genre
+      }.
 
-      Max words: 400
+      Max words: ${body.max_words}
 
-      Creativity level: 10 out of 10
+      Creativity level: ${5 + Number(body.creativity)} out of 10
 
       Make the story text readable by splitting story in paragraphs but only single major title of story
 
