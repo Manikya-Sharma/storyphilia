@@ -16,16 +16,27 @@ import { Textarea } from "@/components/ui/textarea";
 import toast, { Toaster } from "react-hot-toast";
 import { GenAiRequest } from "@/types/genai-types";
 
+import Markdown from "react-markdown";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+
 const Page = () => {
   const [open, setOpen] = useState(false);
   const [genreValue, setGenreValue] = useState("");
   const [promptValue, setPromptValue] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const storySizeRef = useRef<HTMLInputElement | null>(null);
+  const creativityRef = useRef<HTMLInputElement | null>(null);
 
   const [responseGiven, setResponseGiven] = useState<string | null>(null);
 
+  const MAX_STORY_SIZE = 1000;
+
   async function submitRequest() {
+    if (!storySizeRef.current || !creativityRef.current) {
+      return;
+    }
     setLoading(true);
     // check for invalid data
     if (promptValue.trim().length === 0) {
@@ -45,10 +56,44 @@ const Page = () => {
       setLoading(false);
       return;
     }
+    const storySize = Number(storySizeRef.current.value);
+    if (Number.isNaN(storySize)) {
+      toast.error(`Story size should be a valid number`);
+      storySizeRef.current.focus();
+      setLoading(false);
+      return;
+    }
+    if (
+      !Number.isInteger(storySize) ||
+      storySize > MAX_STORY_SIZE ||
+      storySize < 5
+    ) {
+      toast.error(`Story size ${storySize} is invalid for a short story`);
+      storySizeRef.current.focus();
+      setLoading(false);
+      return;
+    }
+
+    const creativity = Number(creativityRef.current.value);
+    if (Number.isNaN(creativity)) {
+      toast.error(`Creativity level should be a valid number`);
+      creativityRef.current.focus();
+      setLoading(false);
+      return;
+    }
+    if (!Number.isInteger(creativity) || creativity > 5 || creativity < 1) {
+      toast.error("Creativity level must be a number from 1 to 5");
+      creativityRef.current.focus();
+      setLoading(false);
+      return;
+    }
+
     // send the data to api
     const dataSent: GenAiRequest = {
       genre: genreValue,
       message: promptValue,
+      creativity: creativity,
+      max_words: storySize,
     };
     const response = await fetch("/api/ai-request", {
       method: "POST",
@@ -84,7 +129,7 @@ const Page = () => {
       <Toaster />
       <div
         className={cn(
-          "w-[90vw] max-w-prose mx-auto rounded-lg shadow-md p-7 border-t",
+          "w-[90vw] max-w-5xl mx-auto rounded-lg shadow-md p-7 border-t",
           {
             "dark glow bg-teal-300 text-teal-950 border-blue-950":
               genreValue === "scifi",
@@ -109,10 +154,9 @@ const Page = () => {
           </div>
         ) : responseGiven ? (
           <div>
-            <h1 className="text-5xl mb-10 text-center">
-              Your {genreValue} story
-            </h1>
-            <p>{responseGiven}</p>
+            <Markdown className="prose dark:text-zinc-200 dark:prose-h2:text-zinc-200 mx-auto">
+              {responseGiven.replace("<br />", "\n")}
+            </Markdown>
             <div className="w-full flex items-center justify-end gap-5">
               <Button
                 className={cn({
@@ -132,8 +176,8 @@ const Page = () => {
             </div>
           </div>
         ) : (
-          // Genre Selection
           <div>
+            {/* Genre Selection */}
             <div className="flex items-center justify-center gap-5">
               <label className="cursor-custom">Select the story genre</label>
               <Popover open={open} onOpenChange={setOpen}>
@@ -185,6 +229,27 @@ const Page = () => {
                 </PopoverContent>
               </Popover>
             </div>
+            {/* Max words and Creativity */}
+
+            <div className="my-5 flex flex-col items-start gap-5">
+              <div className="flex items-center justify-center gap-5">
+                <Label className="block min-w-fit" htmlFor="story-size">
+                  Story Size:
+                </Label>
+                <Input ref={storySizeRef} className="w-14" id="story-size" />
+                <p className="text-sm text-muted-foreground -ml-2">
+                  words (max {MAX_STORY_SIZE})
+                </p>
+              </div>
+              <div className="flex items-center justify-center gap-5">
+                <Label className="block" htmlFor="creativity">
+                  Creativity:
+                </Label>
+                <Input ref={creativityRef} className="w-10" id="creativity" />
+                <p className="text-sm text-muted-foreground -ml-2">out of 5</p>
+              </div>
+            </div>
+
             {/* Prompt */}
 
             <div className="mt-5">

@@ -13,10 +13,8 @@ storyphilia is a ai-powered platform which helps you create short stories.
 
 ## Features in next releases
 
-- Word limit customizable for the final story
-- Extra minor themes for the story
-- Creativity meter
-- Custom API key addition
+- Extra minor themes for creating the story
+- User account for sharing / storing stories / using custom api keys
 
 ## Limitations
 
