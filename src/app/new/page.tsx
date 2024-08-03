@@ -1,6 +1,13 @@
 "use client";
 
-import { Check, ChevronLeft, ChevronsUpDown, Loader2 } from "lucide-react";
+import {
+  Check,
+  ChevronLeft,
+  ChevronsUpDown,
+  Copy,
+  Dices,
+  Loader2,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Command, CommandGroup } from "@/components/ui/command";
@@ -33,13 +40,13 @@ const Page = () => {
 
   const MAX_STORY_SIZE = 1000;
 
-  async function submitRequest() {
+  async function submitRequest(customInvocation: boolean = false) {
     if (!storySizeRef.current || !creativityRef.current) {
       return;
     }
     setLoading(true);
     // check for invalid data
-    if (promptValue.trim().length === 0) {
+    if (!customInvocation && promptValue.trim().length === 0) {
       toast.error("Empty prompt not allowed!");
       textareaRef.current?.focus();
       setLoading(false);
@@ -94,6 +101,7 @@ const Page = () => {
       message: promptValue,
       creativity: creativity,
       max_words: storySize,
+      customInvocation,
     };
     const response = await fetch("/api/ai-request", {
       method: "POST",
@@ -153,7 +161,25 @@ const Page = () => {
             <Loader2 className="size-5 animate-spin" />
           </div>
         ) : responseGiven ? (
-          <div>
+          <div className="relative">
+            <Button
+              variant="ghost"
+              size="icon"
+              className={cn(
+                "absolute right-5 text-sm after:opacity-0 after:content-['copy_to_clipboard'] after:absolute after:-top-10 after:left-1/2 after:-translate-x-1/2 after:bg-[rgba(50,50,50,0.7)] after:backdrop-blur-sm after:px-3 after:py-2 after:rounded-lg hover:after:opacity-100 after:transition-opacity",
+                {
+                  "border border-zinc-500": genreValue === "detective",
+                }
+              )}
+              onClick={() => {
+                navigator.clipboard.writeText(
+                  responseGiven.replace("<br />", "\n")
+                );
+                toast.success("Copied to clipboard");
+              }}
+            >
+              <Copy className="size-4" />
+            </Button>
             <Markdown className="prose dark:text-zinc-200 dark:prose-h2:text-zinc-200 mx-auto">
               {responseGiven.replace("<br />", "\n")}
             </Markdown>
@@ -275,6 +301,18 @@ const Page = () => {
             </div>
             {/* Submit Button */}
             <div className="w-full flex items-center justify-end gap-5 mt-5">
+              <Button
+                className={cn({
+                  "border border-zinc-500": genreValue === "detective",
+                })}
+                variant="secondary"
+                onClick={() => {
+                  submitRequest(true);
+                }}
+              >
+                <Dices className="size-5 mr-1.5" />
+                Random story
+              </Button>
               <Button
                 className={cn({
                   "bg-zinc-800 hover:bg-zinc-700": genreValue === "adventure",
