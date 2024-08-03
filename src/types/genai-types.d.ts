@@ -3,4 +3,5 @@ export type GenAiRequest = {
   message: string;
   max_words: number;
   creativity: number;
+  customInvocation: boolean;
 };
