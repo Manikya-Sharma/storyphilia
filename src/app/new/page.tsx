@@ -1,6 +1,13 @@
 "use client";
 
-import { Check, ChevronLeft, ChevronsUpDown, Loader2 } from "lucide-react";
+import {
+  Check,
+  ChevronLeft,
+  ChevronsUpDown,
+  Copy,
+  Dices,
+  Loader2,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Command, CommandGroup } from "@/components/ui/command";
@@ -17,6 +24,8 @@ import toast, { Toaster } from "react-hot-toast";
 import { GenAiRequest } from "@/types/genai-types";
 
 import Markdown from "react-markdown";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 const Page = () => {
   const [open, setOpen] = useState(false);
@@ -24,13 +33,20 @@ const Page = () => {
   const [promptValue, setPromptValue] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const storySizeRef = useRef<HTMLInputElement | null>(null);
+  const creativityRef = useRef<HTMLInputElement | null>(null);
 
   const [responseGiven, setResponseGiven] = useState<string | null>(null);
 
-  async function submitRequest() {
+  const MAX_STORY_SIZE = 1000;
+
+  async function submitRequest(customInvocation: boolean = false) {
+    if (!storySizeRef.current || !creativityRef.current) {
+      return;
+    }
     setLoading(true);
     // check for invalid data
-    if (promptValue.trim().length === 0) {
+    if (!customInvocation && promptValue.trim().length === 0) {
       toast.error("Empty prompt not allowed!");
       textareaRef.current?.focus();
       setLoading(false);
@@ -47,10 +63,45 @@ const Page = () => {
       setLoading(false);
       return;
     }
+    const storySize = Number(storySizeRef.current.value);
+    if (Number.isNaN(storySize)) {
+      toast.error(`Story size should be a valid number`);
+      storySizeRef.current.focus();
+      setLoading(false);
+      return;
+    }
+    if (
+      !Number.isInteger(storySize) ||
+      storySize > MAX_STORY_SIZE ||
+      storySize < 5
+    ) {
+      toast.error(`Story size ${storySize} is invalid for a short story`);
+      storySizeRef.current.focus();
+      setLoading(false);
+      return;
+    }
+
+    const creativity = Number(creativityRef.current.value);
+    if (Number.isNaN(creativity)) {
+      toast.error(`Creativity level should be a valid number`);
+      creativityRef.current.focus();
+      setLoading(false);
+      return;
+    }
+    if (!Number.isInteger(creativity) || creativity > 5 || creativity < 1) {
+      toast.error("Creativity level must be a number from 1 to 5");
+      creativityRef.current.focus();
+      setLoading(false);
+      return;
+    }
+
     // send the data to api
     const dataSent: GenAiRequest = {
       genre: genreValue,
       message: promptValue,
+      creativity: creativity,
+      max_words: storySize,
+      customInvocation,
     };
     const response = await fetch("/api/ai-request", {
       method: "POST",
@@ -110,7 +161,25 @@ const Page = () => {
             <Loader2 className="size-5 animate-spin" />
           </div>
         ) : responseGiven ? (
-          <div>
+          <div className="relative">
+            <Button
+              variant="ghost"
+              size="icon"
+              className={cn(
+                "absolute right-5 text-sm after:opacity-0 after:content-['copy_to_clipboard'] after:absolute after:-top-10 after:left-1/2 after:-translate-x-1/2 after:bg-[rgba(50,50,50,0.7)] after:backdrop-blur-sm after:px-3 after:py-2 after:rounded-lg hover:after:opacity-100 after:transition-opacity",
+                {
+                  "border border-zinc-500": genreValue === "detective",
+                }
+              )}
+              onClick={() => {
+                navigator.clipboard.writeText(
+                  responseGiven.replace("<br />", "\n")
+                );
+                toast.success("Copied to clipboard");
+              }}
+            >
+              <Copy className="size-4" />
+            </Button>
             <Markdown className="prose dark:text-zinc-200 dark:prose-h2:text-zinc-200 mx-auto">
               {responseGiven.replace("<br />", "\n")}
             </Markdown>
@@ -133,8 +202,8 @@ const Page = () => {
             </div>
           </div>
         ) : (
-          // Genre Selection
           <div>
+            {/* Genre Selection */}
             <div className="flex items-center justify-center gap-5">
               <label className="cursor-custom">Select the story genre</label>
               <Popover open={open} onOpenChange={setOpen}>
@@ -186,6 +255,27 @@ const Page = () => {
                 </PopoverContent>
               </Popover>
             </div>
+            {/* Max words and Creativity */}
+
+            <div className="my-5 flex flex-col items-start gap-5">
+              <div className="flex items-center justify-center gap-5">
+                <Label className="block min-w-fit" htmlFor="story-size">
+                  Story Size:
+                </Label>
+                <Input ref={storySizeRef} className="w-14" id="story-size" />
+                <p className="text-sm text-muted-foreground -ml-2">
+                  words (max {MAX_STORY_SIZE})
+                </p>
+              </div>
+              <div className="flex items-center justify-center gap-5">
+                <Label className="block" htmlFor="creativity">
+                  Creativity:
+                </Label>
+                <Input ref={creativityRef} className="w-10" id="creativity" />
+                <p className="text-sm text-muted-foreground -ml-2">out of 5</p>
+              </div>
+            </div>
+
             {/* Prompt */}
 
             <div className="mt-5">
@@ -211,6 +301,18 @@ const Page = () => {
             </div>
             {/* Submit Button */}
             <div className="w-full flex items-center justify-end gap-5 mt-5">
+              <Button
+                className={cn({
+                  "border border-zinc-500": genreValue === "detective",
+                })}
+                variant="secondary"
+                onClick={() => {
+                  submitRequest(true);
+                }}
+              >
+                <Dices className="size-5 mr-1.5" />
+                Random story
+              </Button>
               <Button
                 className={cn({
                   "bg-zinc-800 hover:bg-zinc-700": genreValue === "adventure",
