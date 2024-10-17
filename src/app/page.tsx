@@ -5,7 +5,7 @@ import { Dancing_Script } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 
-const dancing_script = Dancing_Script({
+export const dancing_script = Dancing_Script({
   weight: "400",
   subsets: ["latin"],
 });
