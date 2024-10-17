@@ -1,14 +1,9 @@
 import { buttonVariants } from "@/components/ui/button";
+import { dancing_script } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
 import { Plus } from "lucide-react";
-import { Dancing_Script } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
-
-export const dancing_script = Dancing_Script({
-  weight: "400",
-  subsets: ["latin"],
-});
 
 export default function Home() {
   return (

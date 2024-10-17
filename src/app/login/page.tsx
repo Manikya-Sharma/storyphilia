@@ -5,7 +5,7 @@ import Image from "next/image";
 import GoogleLoginButton from "./GoogleLoginButton";
 import GithubLoginButton from "./GithubLoginButton";
 import { cn } from "@/lib/utils";
-import { dancing_script } from "../page";
+import { dancing_script } from "@/lib/fonts";
 
 const Page = () => {
   return (
