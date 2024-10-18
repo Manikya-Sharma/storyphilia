@@ -1,9 +1,20 @@
+"use client";
+
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useNavColorStore } from "@/lib/zustand";
 import { ExternalLink } from "lucide-react";
 import Link from "next/link";
 
 const Page = () => {
+  const updateNavColor = useNavColorStore(
+    (state) => state.updateColorClassName
+  );
+
+  updateNavColor(
+    "bg-gradient-to-r from-green-900 to-[rgba(9,43,22)] shadow-md"
+  );
+
   return (
     <div className="flex flex-col-reverse md:flex-row md:gap-5 justify-center h-screen bg-gradient-to-tl from-black to-green-800">
       <div className="md:flex-1 flex flex-col items-center gap-5 justify-center">

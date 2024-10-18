@@ -16,7 +16,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { GENRES } from "../constants/genres";
 import { Textarea } from "@/components/ui/textarea";
@@ -26,6 +26,7 @@ import { GenAiRequest } from "@/types/genai-types";
 import Markdown from "react-markdown";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { useNavColorStore } from "@/lib/zustand";
 
 const Page = () => {
   const [open, setOpen] = useState(false);
@@ -120,6 +121,33 @@ const Page = () => {
     setResponseGiven(message);
     setLoading(false);
   }
+
+  // Navbar color
+  const updateNavColor = useNavColorStore(
+    (state) => state.updateColorClassName
+  );
+  useEffect(() => {
+    switch (genreValue) {
+      case "scifi":
+        updateNavColor("bg-teal-300 text-zinc-50");
+        break;
+      case "adventure":
+        updateNavColor("patterned shadow-lg border border-black/10");
+        break;
+      case "romance":
+        updateNavColor("bg-rose-200");
+        break;
+      case "action":
+        updateNavColor("bg-white");
+        break;
+      case "detective":
+        updateNavColor("bg-gradient-to-br from-zinc-700 to-zinc-800 shadow-md");
+        break;
+      case "horror":
+        updateNavColor("bg-red-800/70");
+        break;
+    }
+  }, [genreValue]);
 
   return (
     <div

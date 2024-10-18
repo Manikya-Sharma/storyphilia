@@ -32,13 +32,13 @@ const LoginForm = () => {
       <Button
         variant="link"
         size="sm"
-        className="ml-auto mt-1 block w-fit text-sm text-purple-500"
+        className="ml-auto mt-1 block w-fit text-sm text-rose-400"
       >
         Forgot Password?
       </Button>
       <Button
         type="submit"
-        className="mt-2 block w-full rounded-3xl bg-purple-700 hover:bg-purple-600"
+        className="mt-2 block w-full rounded-3xl bg-rose-600 hover:bg-rose-500"
         onClick={(e) => {
           e.preventDefault();
         }}

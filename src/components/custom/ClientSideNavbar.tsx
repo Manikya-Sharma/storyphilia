@@ -7,12 +7,20 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { buttonVariants } from "../ui/button";
+import { useNavColorStore } from "@/lib/zustand";
 
 const ClientSideNavbar = ({ user }: { user?: User }) => {
+  const navColor = useNavColorStore((state) => state.colorClassName);
+
   const pathName = usePathname();
   return (
     <div>
-      <div className="z-50 h-16 px-10 py-5 bg-gradient-to-r from-[rgba(225,29,72,0.1)] to-[rgba(225,29,72,0.8)] text-zinc-50 backdrop-blur-2xl fixed inset-x-0 md:w-[60vw] md:left-1/2 md:-translate-x-1/2 md:rounded-lg md:mt-5 cursor-custom">
+      <div
+        className={cn(
+          "z-50 h-16 px-10 py-5 backdrop-blur-2xl fixed inset-x-0 md:w-[60vw] md:left-1/2 md:-translate-x-1/2 md:rounded-lg md:mt-5 cursor-custom",
+          navColor
+        )}
+      >
         <Link href="/" className="cursor-pointer-custom">
           <Image
             src="/logo.svg"
@@ -39,18 +47,20 @@ const ClientSideNavbar = ({ user }: { user?: User }) => {
                   <StarsIcon className="size-5 md:ml-1.5" />
                 </Link>
               )}
-              <Link
-                href="/login"
-                className={cn(
-                  buttonVariants({
-                    variant: "secondary",
-                    className: "cursor-pointer-custom",
-                  })
-                )}
-              >
-                <span className="hidden md:block">Login</span>
-                <LogIn className="size-5 md:ml-1.5" />
-              </Link>
+              {pathName.includes("/login") ? null : (
+                <Link
+                  href="/login"
+                  className={cn(
+                    buttonVariants({
+                      variant: "secondary",
+                      className: "cursor-pointer-custom",
+                    })
+                  )}
+                >
+                  <span className="hidden md:block">Login</span>
+                  <LogIn className="size-5 md:ml-1.5" />
+                </Link>
+              )}
             </div>
           ) : (
             <Link

@@ -1,3 +1,4 @@
+import SetDefaultNavbar from "@/components/custom/SetDefaultNavbar";
 import { buttonVariants } from "@/components/ui/button";
 import { dancing_script } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
@@ -8,6 +9,7 @@ import Link from "next/link";
 export default function Home() {
   return (
     <main className="patterned h-full -z-10">
+      <SetDefaultNavbar />
       <div className="pt-24 px-10">
         <div className="flex flex-col lg:flex-row items-center justify-between mt-5 gap-10 md:gap-16 pb-20">
           <div>
