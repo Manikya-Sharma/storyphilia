@@ -1,13 +1,13 @@
 import { google_model } from "@/providers/google-genai";
 import type { GenAiRequest } from "@/types/genai-types";
-import { generateText } from "ai";
+import { streamText } from "ai";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   const body = (await req.json()) as GenAiRequest;
 
   try {
-    const { text } = await generateText({
+    const response = streamText({
       model: google_model,
       prompt: body.customInvocation
         ? `
@@ -44,7 +44,13 @@ export async function POST(req: NextRequest) {
       `,
     });
 
-    return NextResponse.json({ message: text.replace("\n", "<br />") });
+    return response.toTextStreamResponse({
+      headers: {
+        "Content-Type": "text/event-stream",
+        "Cache-control": "no-cache",
+        Connection: "keep-alive",
+      },
+    });
   } catch (e) {
     console.log("Error: ", e);
     return NextResponse.json("Not ok", { status: 500 });
