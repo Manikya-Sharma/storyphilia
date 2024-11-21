@@ -64,7 +64,7 @@ const ClientSideNavbar = ({ user }: { user?: User }) => {
             </div>
           ) : (
             <Link
-              href="/new"
+              href="/dashboard"
               className={cn(
                 buttonVariants({
                   variant: "secondary",
