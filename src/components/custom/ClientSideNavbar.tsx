@@ -1,13 +1,14 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { LogIn, StarsIcon, Warehouse } from "lucide-react";
+import { LogIn, LogOut, StarsIcon, Warehouse } from "lucide-react";
 import { User } from "next-auth";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { buttonVariants } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
 import { useNavColorStore } from "@/lib/zustand";
+import { signOut } from "next-auth/react";
 
 const ClientSideNavbar = ({ user }: { user?: User }) => {
   const navColor = useNavColorStore((state) => state.colorClassName);
@@ -63,18 +64,30 @@ const ClientSideNavbar = ({ user }: { user?: User }) => {
               )}
             </div>
           ) : (
-            <Link
-              href="/dashboard"
-              className={cn(
-                buttonVariants({
-                  variant: "secondary",
-                  className: "cursor-pointer-custom",
-                })
+            <div className="flex items-center gap-2">
+              {pathName.includes("/dashboard") ? null : (
+                <Link
+                  href="/dashboard"
+                  className={cn(
+                    buttonVariants({
+                      variant: "secondary",
+                      className: "cursor-pointer-custom",
+                    })
+                  )}
+                >
+                  <Warehouse className="size-5 md:mr-1.5" />
+                  <span className="hidden md:block">Dashboard</span>
+                </Link>
               )}
-            >
-              <Warehouse className="size-5 md:mr-1.5" />
-              <span className="hidden md:block">Go to dashboard</span>
-            </Link>
+              <Button
+                className="cursor-pointer-custom"
+                variant="default"
+                onClick={async () => await signOut()}
+              >
+                <LogOut className="size-5 md:mr-1.5" />
+                <span className="hidden md:block">Logout</span>
+              </Button>
+            </div>
           )}
         </div>
       </div>

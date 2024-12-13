@@ -1,6 +1,9 @@
+"use server";
+
 import SetDefaultNavbar from "@/components/custom/SetDefaultNavbar";
 import { getUser } from "@/lib/authUtils";
 import { redirect } from "next/navigation";
+import DashboardPageContent from "./DashboardPageContent";
 
 const Page = async () => {
   const user = await getUser();
@@ -11,7 +14,7 @@ const Page = async () => {
   return (
     <div>
       <SetDefaultNavbar />
-      {user.name}
+      <DashboardPageContent user={user} />
     </div>
   );
 };

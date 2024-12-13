@@ -97,7 +97,11 @@ const InputForm = ({
           <Label className="block min-w-fit" htmlFor="story-size">
             Story Size:
           </Label>
-          <Input ref={storySizeRef} className="w-14" id="story-size" />
+          <Input
+            ref={storySizeRef}
+            className={cn("w-14", genreValue === "scifi" && "text-white")}
+            id="story-size"
+          />
           <p className="text-sm text-muted-foreground -ml-2">
             words (max {max_story_size})
           </p>
@@ -106,7 +110,11 @@ const InputForm = ({
           <Label className="block" htmlFor="creativity">
             Creativity:
           </Label>
-          <Input ref={creativityRef} className="w-10" id="creativity" />
+          <Input
+            ref={creativityRef}
+            className={cn("w-10", genreValue === "scifi" && "text-white")}
+            id="creativity"
+          />
           <p className="text-sm text-muted-foreground -ml-2">out of 5</p>
         </div>
       </div>
