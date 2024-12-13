@@ -10,6 +10,8 @@ import toast, { Toaster } from "react-hot-toast";
 import { useNavColorStore } from "@/lib/zustand";
 import GeneratedResponse from "./GeneratedResponse";
 import InputForm from "./InputForm";
+import { MAX_STORY_SIZE } from "../constants/config";
+import { getUser } from "@/lib/authUtils";
 
 const Page = () => {
   const [open, setOpen] = useState(false);
@@ -17,13 +19,12 @@ const Page = () => {
   const [promptValue, setPromptValue] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
   const [creating, setCreating] = useState<boolean>(false);
+  const [saving, setSaving] = useState<boolean>(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const storySizeRef = useRef<HTMLInputElement | null>(null);
   const creativityRef = useRef<HTMLInputElement | null>(null);
 
   const [responseGiven, setResponseGiven] = useState<string | null>(null);
-
-  const MAX_STORY_SIZE = 1000;
 
   async function submitRequest(customInvocation: boolean = false) {
     if (!storySizeRef.current || !creativityRef.current) {
@@ -119,6 +120,38 @@ const Page = () => {
     setCreating(false);
   }
 
+  const saveToLibrary = async () => {
+    setSaving(true);
+    const user = await getUser();
+
+    if (!responseGiven) {
+      toast.error("The story is not generated yet!");
+      setSaving(false);
+      return;
+    }
+
+    if (!user) {
+      toast.error("You are not logged in, unable to save the story");
+      setSaving(false);
+      return;
+    }
+
+    await fetch("/api/story", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: user.id,
+        content: responseGiven,
+        genre: genreValue,
+      }),
+    });
+
+    toast.success("Story saved successfully");
+    setSaving(false);
+  };
+
   // Navbar color
   const updateNavColor = useNavColorStore(
     (state) => state.updateColorClassName
@@ -189,9 +222,11 @@ const Page = () => {
         ) : responseGiven ? (
           <GeneratedResponse
             creating={creating}
+            saving={saving}
             genreValue={genreValue}
             responseGiven={responseGiven}
             setResponseGiven={setResponseGiven}
+            saveToLibrary={saveToLibrary}
           />
         ) : (
           <InputForm
