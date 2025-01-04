@@ -24,6 +24,8 @@ const Page = () => {
   const storySizeRef = useRef<HTMLInputElement | null>(null);
   const creativityRef = useRef<HTMLInputElement | null>(null);
 
+  const [kidsStory, setKidsStory] = useState<boolean>(false);
+
   const [responseGiven, setResponseGiven] = useState<string | null>(null);
 
   async function submitRequest(customInvocation: boolean = false) {
@@ -177,7 +179,7 @@ const Page = () => {
         updateNavColor("bg-red-800/70");
         break;
     }
-  }, [genreValue]);
+  }, [genreValue, updateNavColor]);
 
   return (
     <div
@@ -221,6 +223,8 @@ const Page = () => {
           </div>
         ) : responseGiven ? (
           <GeneratedResponse
+            kidsStory={kidsStory}
+            setKidsStory={setKidsStory}
             creating={creating}
             saving={saving}
             genreValue={genreValue}
@@ -230,6 +234,8 @@ const Page = () => {
           />
         ) : (
           <InputForm
+            kidsStory={kidsStory}
+            setKidsStory={setKidsStory}
             creativityRef={creativityRef}
             genreValue={genreValue}
             max_story_size={MAX_STORY_SIZE}

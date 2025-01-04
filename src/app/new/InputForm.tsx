@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { Check, ChevronsUpDown, Dices } from "lucide-react";
 import { GENRES } from "../constants/genres";
+import { Switch } from "@/components/ui/switch";
 
 interface InputFormProps {
   setGenreValue: Function;
@@ -23,6 +24,8 @@ interface InputFormProps {
   creativityRef: React.MutableRefObject<HTMLInputElement | null>;
   textareaRef: React.MutableRefObject<HTMLTextAreaElement | null>;
   submitRequest: Function;
+  kidsStory: boolean;
+  setKidsStory: Function;
 }
 
 const InputForm = ({
@@ -36,6 +39,8 @@ const InputForm = ({
   creativityRef,
   textareaRef,
   submitRequest,
+  kidsStory,
+  setKidsStory,
 }: InputFormProps) => {
   return (
     <div>
@@ -142,6 +147,18 @@ const InputForm = ({
           className="mt-5 border-zinc-400 focus-visible:ring-blue-400 dark:text-zinc-100"
         ></Textarea>
       </div>
+
+      <div className="flex items-center gap-1.5 mt-2 ml-auto sm:mr-auto sm:ml-0 w-fit">
+        <Label className="cursor-pointer-custom" htmlFor="kids-story">
+          Kids story
+        </Label>
+        <Switch
+          checked={kidsStory}
+          onCheckedChange={() => setKidsStory(!kidsStory)}
+          id="kids-story"
+        />
+      </div>
+
       {/* Submit Button */}
       <div className="w-full flex items-center justify-end gap-5 mt-5">
         <Button
