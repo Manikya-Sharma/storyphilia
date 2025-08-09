@@ -10,6 +10,19 @@ const saveToLibrary = z
   })
   .strict();
 
+export async function GET(req: NextRequest) {
+  const id = req.nextUrl.searchParams.get("id");
+  if (!id) {
+    return NextResponse.json({ message: "Invalid request" }, { status: 401 });
+  }
+
+  const story = await db.story.findFirst({
+    where: { id },
+  });
+
+  return NextResponse.json(story);
+}
+
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const data = saveToLibrary.parse(body);
@@ -35,11 +48,11 @@ export async function POST(req: NextRequest) {
   if (existing !== null) {
     return NextResponse.json(
       { message: "The story already exists" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
-  await db.story.create({
+  const result = await db.story.create({
     data: {
       userId: data.userId,
       content: data.content,
@@ -47,23 +60,20 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  return NextResponse.json({ message: "ok" });
+  return NextResponse.json({ id: result.id });
 }
 
-const deleteFromLibrary = z
-  .object({
-    userId: z.string().min(1),
-    storyId: z.string().min(1),
-  })
-  .strict();
-
 export async function DELETE(req: NextRequest) {
-  const body = await req.json();
-  const data = deleteFromLibrary.parse(body);
+  const id = req.nextUrl.searchParams.get("id");
+  const userId = req.nextUrl.searchParams.get("userId");
+
+  if (!id || !userId) {
+    return NextResponse.json({ message: "Invalid request" }, { status: 401 });
+  }
 
   const user = await db.user.findFirst({
     where: {
-      id: data.userId,
+      id: userId,
     },
   });
 
@@ -73,8 +83,8 @@ export async function DELETE(req: NextRequest) {
 
   await db.story.delete({
     where: {
-      id: data.storyId,
-      userId: data.userId,
+      id,
+      userId,
     },
   });
 
