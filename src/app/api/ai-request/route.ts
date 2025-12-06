@@ -3,12 +3,36 @@ import type { GenAiRequest } from "@/types/genai-types";
 import { streamText } from "ai";
 import { NextRequest, NextResponse } from "next/server";
 
+const safetySettings = [
+  {
+    category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+    threshold: "BLOCK_LOW_AND_ABOVE",
+  },
+  {
+    category: "HARM_CATEGORY_HARASSMENT",
+    threshold: "BLOCK_LOW_AND_ABOVE",
+  },
+  {
+    category: "HARM_CATEGORY_HATE_SPEECH",
+    threshold: "BLOCK_LOW_AND_ABOVE",
+  },
+  {
+    category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+    threshold: "BLOCK_LOW_AND_ABOVE",
+  },
+];
+
 export async function POST(req: NextRequest) {
   const body = (await req.json()) as GenAiRequest;
 
   try {
     const response = streamText({
       model: google_model,
+      providerOptions: {
+        google: {
+          safetySettings,
+        },
+      },
       prompt: body.customInvocation
         ? `
       You have to give me a small story on genre ${body.genre}.

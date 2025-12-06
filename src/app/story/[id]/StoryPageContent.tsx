@@ -67,7 +67,7 @@ const StoryPageContent = ({ story: { genre, content } }: { story: Story }) => {
             "dark glow-white bg-zinc-800 text-zinc-100 border-zinc-950":
               genre === "detective",
             "dark glow-red text-zinc-100 border-zinc-950": genre === "horror",
-          }
+          },
         )}
       >
         <div className="relative">
@@ -79,7 +79,7 @@ const StoryPageContent = ({ story: { genre, content } }: { story: Story }) => {
                 "relative text-sm after:opacity-0 after:content-['copy_to_clipboard'] after:absolute after:-top-10 after:left-1/2 after:-translate-x-1/2 after:bg-[rgba(50,50,50,0.7)] after:backdrop-blur-sm after:px-3 after:py-2 after:rounded-lg hover:after:opacity-100 after:transition-opacity",
                 {
                   "border border-zinc-500": genre === "detective",
-                }
+                },
               )}
               onClick={() => {
                 navigator.clipboard.writeText(content);
@@ -90,18 +90,18 @@ const StoryPageContent = ({ story: { genre, content } }: { story: Story }) => {
             </Button>
           </div>
 
-          <Markdown
+          <div
             className={cn(
               "prose text-pretty text-zinc-200 prose-h2:text-zinc-200 mx-auto",
               (genre === "scifi" ||
                 genre === "adventure" ||
                 genre === "romance" ||
                 genre === "action") &&
-                "text-black/90 prose-h2:text-black"
+                "text-black/90 prose-h2:text-black",
             )}
           >
-            {content}
-          </Markdown>
+            <Markdown>{content}</Markdown>
+          </div>
           <div className="w-full flex items-center justify-end gap-5 mt-3">
             <Button
               className={cn({

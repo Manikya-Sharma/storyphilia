@@ -101,9 +101,12 @@ const GeneratedResponse = ({
             >
               {pages.map((page, index) => (
                 <div key={index} className="bg-white p-5">
-                  <Markdown className="prose text-pretty text-zinc-800 prose-h2:text-zinc-200 mx-auto">
-                    {page + (index !== pages.length - 1 ? "..." : "\n THE END")}
-                  </Markdown>
+                  <div className="prose text-pretty text-zinc-800 prose-h2:text-zinc-200 mx-auto">
+                    <Markdown>
+                      {page +
+                        (index !== pages.length - 1 ? "..." : "\n THE END")}
+                    </Markdown>
+                  </div>
                 </div>
               ))}
             </HTMLFlipBook>
@@ -169,7 +172,7 @@ const GeneratedResponse = ({
               "relative text-sm after:opacity-0 after:content-['copy_to_clipboard'] after:absolute after:-top-10 after:left-1/2 after:-translate-x-1/2 after:bg-[rgba(50,50,50,0.7)] after:backdrop-blur-sm after:px-3 after:py-2 after:rounded-lg hover:after:opacity-100 after:transition-opacity",
               {
                 "border border-zinc-500": genreValue === "detective",
-              }
+              },
             )}
             onClick={() => {
               navigator.clipboard.writeText(responseGiven);
@@ -185,24 +188,24 @@ const GeneratedResponse = ({
           <div
             className={cn("size-4 rounded-full animate-ping bg-black", {
               "bg-white": ["romance", "detective", "horror"].includes(
-                genreValue
+                genreValue,
               ),
             })}
           />
         </div>
       )}
-      <Markdown
+      <div
         className={cn(
           "prose text-pretty text-zinc-200 prose-h2:text-zinc-200 mx-auto",
           (genreValue === "scifi" ||
             genreValue === "adventure" ||
             genreValue === "romance" ||
             genreValue === "action") &&
-            "text-black/90 prose-h2:text-black"
+            "text-black/90 prose-h2:text-black",
         )}
       >
-        {responseGiven}
-      </Markdown>
+        <Markdown>{responseGiven}</Markdown>
+      </div>
       <div className="w-full flex items-center justify-between gap-5 mt-3">
         <div className="flex items-center gap-1.5 w-fit">
           <Label className="cursor-pointer-custom" htmlFor="kids-story">

@@ -4,7 +4,16 @@ import GitHub from "next-auth/providers/github";
 import { db } from "./lib/db";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  providers: [Google, GitHub],
+  providers: [
+    Google({
+      clientId: process.env.AUTH_GOOGLE_ID!,
+      clientSecret: process.env.AUTH_GITHUB_SECRET!,
+    }),
+    GitHub({
+      clientId: process.env.AUTH_GITHUB_ID!,
+      clientSecret: process.env.AUTH_GITHUB_SECRET!,
+    }),
+  ],
   callbacks: {
     signIn: async ({ user: { email, id, name } }) => {
       if (!id || !name || !email) return false;
