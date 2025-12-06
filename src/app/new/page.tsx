@@ -11,7 +11,6 @@ import { useNavColorStore } from "@/lib/zustand";
 import GeneratedResponse from "./GeneratedResponse";
 import InputForm from "./InputForm";
 import { MAX_STORY_SIZE } from "../constants/config";
-import { getUser } from "@/lib/authUtils";
 
 const Page = () => {
   const [open, setOpen] = useState(false);
@@ -99,7 +98,7 @@ const Page = () => {
     if (!response.ok || !response.body) {
       // Most probably, api request limit exceeded
       toast.error(
-        "Sorry, google GenAI token limit has exceeded, please try again later"
+        "Sorry, google GenAI token limit has exceeded, please try again later",
       );
       setLoading(false);
       return;
@@ -124,7 +123,11 @@ const Page = () => {
 
   const saveToLibrary = async () => {
     setSaving(true);
-    const user = await getUser();
+
+    // FIXME: USE PRISMA USER AFTER OBTAINING FROM AUTH
+    const user = {
+      id: "",
+    };
 
     if (!responseGiven) {
       toast.error("The story is not generated yet!");
@@ -156,7 +159,7 @@ const Page = () => {
 
   // Navbar color
   const updateNavColor = useNavColorStore(
-    (state) => state.updateColorClassName
+    (state) => state.updateColorClassName,
   );
   useEffect(() => {
     switch (genreValue) {
@@ -213,7 +216,7 @@ const Page = () => {
               genreValue === "detective",
             "dark glow-red text-zinc-100 border-zinc-950":
               genreValue === "horror",
-          }
+          },
         )}
       >
         {loading ? (

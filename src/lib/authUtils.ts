@@ -1,28 +1,16 @@
-"use server";
-
-import { auth, signIn, signOut } from "@/auth";
-import type { User } from "@prisma/client";
+import { auth } from "@/auth";
+import { type ReadonlyHeaders } from "next/dist/server/web/spec-extension/adapters/headers";
 import { db } from "./db";
 
-export async function serverSignIn(provider: "github" | "google") {
-  await signIn(provider, { redirectTo: "/dashboard" });
-}
-
-export async function serverSignOut() {
-  await signOut({ redirectTo: "/" });
-}
-
-export async function getUser(): Promise<User | null> {
-  const session = await auth();
-  if (!session || !session.user) {
-    return null;
-  }
-
-  const account = await db.user.findFirst({
-    where: {
-      externalId: session.user.id,
-    },
-  });
-
-  return account;
+export async function getUser(headers: ReadonlyHeaders) {
+	const session = await auth.api.getSession({
+		headers,
+	});
+	const authUser = session?.user;
+	const user = await db.user.findFirst({
+		where: {
+			email: authUser?.email,
+		},
+	});
+	return user;
 }

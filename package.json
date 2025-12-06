@@ -19,6 +19,7 @@
     "@radix-ui/react-switch": "^1.2.6",
     "@tailwindcss/postcss": "^4.1.17",
     "ai": "^5.0.106",
+    "better-auth": "^1.4.5",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",

@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { getUser } from "@/lib/authUtils";
 import { cn } from "@/lib/utils";
 import type { Story } from "@prisma/client";
 import { Copy, Save } from "lucide-react";
@@ -14,7 +13,10 @@ const StoryPageContent = ({ story: { genre, content } }: { story: Story }) => {
 
   const saveToLibrary = async () => {
     setSaving(true);
-    const user = await getUser();
+    // FIXME: USE PRISMA USER AFTER OBTAINING FROM AUTH
+    const user = {
+      id: "",
+    };
 
     if (!user) {
       toast.error("You are not logged in, unable to save the story");

@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { serverSignIn } from "@/lib/authUtils";
+import { auth } from "@/auth";
 
 const GoogleLoginButton = () => {
   return (
@@ -9,7 +9,11 @@ const GoogleLoginButton = () => {
       variant="outline"
       className="flex items-center rounded-3xl text-zinc-900"
       onClick={async () => {
-        serverSignIn("google");
+        await auth.api.signInSocial({
+          body: {
+            provider: "google",
+          },
+        });
       }}
     >
       <svg
