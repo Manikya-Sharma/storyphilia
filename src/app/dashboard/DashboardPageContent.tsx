@@ -3,10 +3,17 @@ import SetDefaultNavbar from "@/components/custom/SetDefaultNavbar";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import type { Story, User } from "@prisma/client";
+import {
+  useDeleteStory,
+  useGetStories,
+  useGetUserStories,
+} from "@/queries/story";
+import type { User } from "@prisma/client";
+import { useQueryClient } from "@tanstack/react-query";
 import { Loader2, Pen, Rabbit, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
+import toast from "react-hot-toast";
 
 const getStory = (content: string, genre: string) => {
   return (
@@ -18,43 +25,32 @@ const getStory = (content: string, genre: string) => {
 };
 
 const DashboardPageContent = ({ user }: { user: User }) => {
-  const [stories, setStories] = useState<Array<Story>>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  const [isDeleting, setIsDeleting] = useState<Story | null>(null);
-
-  const deleteStory = async (story: Story) => {
-    setIsDeleting(story);
-    await fetch("/api/story", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        userId: user.id,
-        storyId: story.id,
-      }),
+  const { data: rawStoryIds, isLoading: isLoadingStoriesIds } =
+    useGetUserStories({
+      userId: user.id,
     });
-    setIsDeleting(null);
-    setStories([...stories].filter((st) => st !== story));
-  };
 
-  useEffect(() => {
-    async function getStories() {
-      const response = await fetch("/api/story/get", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId: user.id }),
-        cache: "no-cache",
-      });
-      const stories = (await response.json()) as Array<Story>;
-      setStories(stories);
-      setLoading(false);
-    }
-    getStories();
-  }, [user.id]);
+  const storyIds = useMemo(
+    () => rawStoryIds?.map(({ id }) => id),
+    [rawStoryIds],
+  );
+
+  const storiesQueries = useGetStories({ ids: storyIds ?? [] });
+  const stories = storiesQueries.map((story) => story.data);
+  const isLoadingStories = storiesQueries.some((story) => story.isLoading);
+
+  const queryClient = useQueryClient();
+
+  const { mutate: deleteStory, isPending: isDeleting } = useDeleteStory({
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["getStoryIds", user.id] });
+    },
+    onError: () => {
+      toast.error("Unable to delete the story");
+    },
+  });
+
+  const isLoading = isLoadingStoriesIds || isLoadingStories;
 
   return (
     <div>
@@ -68,7 +64,7 @@ const DashboardPageContent = ({ user }: { user: User }) => {
               className={cn(
                 buttonVariants({
                   variant: "default",
-                })
+                }),
               )}
             >
               <Pen className="size-4 mr-1.5" />
@@ -76,7 +72,7 @@ const DashboardPageContent = ({ user }: { user: User }) => {
             </Link>
           </div>
         )}
-        {loading ? (
+        {isLoading ? (
           <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
             <Loader2 className="size-8 animate-spin" />
             <p className="text-muted-foreground mt-1.5">
@@ -95,7 +91,7 @@ const DashboardPageContent = ({ user }: { user: User }) => {
                 buttonVariants({
                   variant: "default",
                   className: "cursor-pointer-custom",
-                })
+                }),
               )}
             >
               <Pen className="size-4 mr-1.5" />
@@ -107,26 +103,22 @@ const DashboardPageContent = ({ user }: { user: User }) => {
             {stories.map((story) => (
               <li
                 className="relative max-w-sm px-5 pt-3 pb-16 ring ring-black/5 shadow rounded-lg text-black/80 text-pretty"
-                key={story.id}
+                key={story?.id}
               >
-                {getStory(story.content, story.genre)}
+                {story && getStory(story.content, story?.genre)}
                 <div className="flex w-full px-5 left-0 items-center justify-between gap-3 absolute bottom-3">
                   <Button
-                    onClick={() => deleteStory(story)}
+                    onClick={() => story && deleteStory(story)}
                     className="cursor-pointer-custom"
                     variant="ghost"
                     size="icon"
                     aria-label="Delete"
-                    disabled={isDeleting !== null}
+                    disabled={isDeleting}
                   >
-                    {isDeleting === story ? (
-                      <Loader2 className="size-4 animate-spin" />
-                    ) : (
-                      <Trash2 className="size-4 text-red-500" />
-                    )}
+                    <Trash2 className="size-4 text-red-500" />
                   </Button>
                   <Link
-                    href={`/story/${story.id}`}
+                    href={`/story/${story?.id}`}
                     className={buttonVariants({
                       variant: "link",
                       className: "cursor-pointer-custom",

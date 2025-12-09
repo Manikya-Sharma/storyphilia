@@ -1,43 +1,34 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { getUser } from "@/lib/authUtils";
 import { cn } from "@/lib/utils";
+import { usePostStory } from "@/queries/story";
 import type { Story } from "@prisma/client";
 import { Copy, Save } from "lucide-react";
-import { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import Markdown from "react-markdown";
 
 const StoryPageContent = ({ story: { genre, content } }: { story: Story }) => {
-  const [saving, setSaving] = useState<boolean>(false);
+  const { mutate: postStory, isPending: isPostingStory } = usePostStory({
+    onSuccess: () => toast.success("Story posted successfully"),
+    onError: () => toast.error("Could not post the story"),
+  });
 
   const saveToLibrary = async () => {
-    setSaving(true);
-    // FIXME: USE PRISMA USER AFTER OBTAINING FROM AUTH
-    const user = {
-      id: "",
-    };
+    // FIXME: Get user from prisma
+    const user = { id: "" };
 
     if (!user) {
       toast.error("You are not logged in, unable to save the story");
-      setSaving(false);
       return;
     }
 
-    await fetch("/api/story", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        userId: user.id,
-        content,
-        genre,
-      }),
+    postStory({
+      userId: user.id,
+      content,
+      genre,
     });
-
-    toast.success("Story saved successfully");
-    setSaving(false);
   };
 
   return (
@@ -114,10 +105,10 @@ const StoryPageContent = ({ story: { genre, content } }: { story: Story }) => {
                   genre === "detective",
               })}
               onClick={() => saveToLibrary()}
-              disabled={saving}
+              disabled={isPostingStory}
             >
               <Save className="size-5 mr-1.5" />
-              {saving ? "Saving..." : "Save to your library"}
+              {isPostingStory ? "Saving..." : "Save to your library"}
             </Button>
           </div>
         </div>

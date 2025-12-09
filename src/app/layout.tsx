@@ -2,6 +2,7 @@ import Navbar from "@/components/custom/Navbar";
 import type { Metadata } from "next";
 import "./globals.css";
 import { inter } from "@/lib/fonts";
+import Providers from "@/providers/Providers";
 
 export const metadata: Metadata = {
   title: "storyphilia",
@@ -29,8 +30,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Navbar />
-        <div className="cursor-custom min-h-[100vh]">{children}</div>
+        <Providers>
+          <Navbar />
+          <div className="cursor-custom min-h-[100vh]">{children}</div>
+        </Providers>
       </body>
     </html>
   );

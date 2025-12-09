@@ -11,6 +11,8 @@ import { useNavColorStore } from "@/lib/zustand";
 import GeneratedResponse from "./GeneratedResponse";
 import InputForm from "./InputForm";
 import { MAX_STORY_SIZE } from "../constants/config";
+import { getUser } from "@/lib/authUtils";
+import { usePostStory } from "@/queries/story";
 
 const Page = () => {
   const [open, setOpen] = useState(false);
@@ -18,7 +20,6 @@ const Page = () => {
   const [promptValue, setPromptValue] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
   const [creating, setCreating] = useState<boolean>(false);
-  const [saving, setSaving] = useState<boolean>(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const storySizeRef = useRef<HTMLInputElement | null>(null);
   const creativityRef = useRef<HTMLInputElement | null>(null);
@@ -26,6 +27,15 @@ const Page = () => {
   const [kidsStory, setKidsStory] = useState<boolean>(false);
 
   const [responseGiven, setResponseGiven] = useState<string | null>(null);
+
+  const { mutate: postStory, isPending: isPostingStory } = usePostStory({
+    onSuccess: () => {
+      toast.success("Posted successfully");
+    },
+    onError: () => {
+      toast.error("Could not post the story");
+    },
+  });
 
   async function submitRequest(customInvocation: boolean = false) {
     if (!storySizeRef.current || !creativityRef.current) {
@@ -122,39 +132,24 @@ const Page = () => {
   }
 
   const saveToLibrary = async () => {
-    setSaving(true);
-
-    // FIXME: USE PRISMA USER AFTER OBTAINING FROM AUTH
-    const user = {
-      id: "",
-    };
+    // FIXME: Get user from prisma
+    const user = { id: "" };
 
     if (!responseGiven) {
       toast.error("The story is not generated yet!");
-      setSaving(false);
       return;
     }
 
     if (!user) {
       toast.error("You are not logged in, unable to save the story");
-      setSaving(false);
       return;
     }
 
-    await fetch("/api/story", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        userId: user.id,
-        content: responseGiven,
-        genre: genreValue,
-      }),
+    postStory({
+      userId: user.id,
+      content: responseGiven,
+      genre: genreValue,
     });
-
-    toast.success("Story saved successfully");
-    setSaving(false);
   };
 
   // Navbar color
@@ -229,7 +224,7 @@ const Page = () => {
             kidsStory={kidsStory}
             setKidsStory={setKidsStory}
             creating={creating}
-            saving={saving}
+            saving={isPostingStory}
             genreValue={genreValue}
             responseGiven={responseGiven}
             setResponseGiven={setResponseGiven}
