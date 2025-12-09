@@ -3,6 +3,8 @@ import type { GenAiRequest } from "@/types/genai-types";
 import { streamText } from "ai";
 import { NextRequest, NextResponse } from "next/server";
 
+// TODO: Switch from Gemini as it requires payment details now
+
 const safetySettings = [
   {
     category: "HARM_CATEGORY_DANGEROUS_CONTENT",

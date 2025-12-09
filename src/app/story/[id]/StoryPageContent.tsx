@@ -1,24 +1,24 @@
 "use client";
 
+import { authClient } from "@/auth-client";
 import { Button } from "@/components/ui/button";
-import { getUser } from "@/lib/authUtils";
 import { cn } from "@/lib/utils";
 import { usePostStory } from "@/queries/story";
+import { getUserQuery } from "@/queries/user";
 import type { Story } from "@prisma/client";
 import { Copy, Save } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import Markdown from "react-markdown";
 
 const StoryPageContent = ({ story: { genre, content } }: { story: Story }) => {
+  const { data: session } = authClient.useSession();
+  const { data: user } = getUserQuery({ userEmail: session?.user.email });
   const { mutate: postStory, isPending: isPostingStory } = usePostStory({
     onSuccess: () => toast.success("Story posted successfully"),
     onError: () => toast.error("Could not post the story"),
   });
 
   const saveToLibrary = async () => {
-    // FIXME: Get user from prisma
-    const user = { id: "" };
-
     if (!user) {
       toast.error("You are not logged in, unable to save the story");
       return;

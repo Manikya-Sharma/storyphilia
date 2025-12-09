@@ -11,10 +11,16 @@ import { useNavColorStore } from "@/lib/zustand";
 import GeneratedResponse from "./GeneratedResponse";
 import InputForm from "./InputForm";
 import { MAX_STORY_SIZE } from "../constants/config";
-import { getUser } from "@/lib/authUtils";
 import { usePostStory } from "@/queries/story";
+import { getUserQuery } from "@/queries/user";
+import { authClient } from "@/auth-client";
 
 const Page = () => {
+  const { data: session } = authClient.useSession();
+  const { data: user } = getUserQuery({
+    userEmail: session?.user.email,
+  });
+
   const [open, setOpen] = useState(false);
   const [genreValue, setGenreValue] = useState("");
   const [promptValue, setPromptValue] = useState("");
@@ -132,9 +138,6 @@ const Page = () => {
   }
 
   const saveToLibrary = async () => {
-    // FIXME: Get user from prisma
-    const user = { id: "" };
-
     if (!responseGiven) {
       toast.error("The story is not generated yet!");
       return;
