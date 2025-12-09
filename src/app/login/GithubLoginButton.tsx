@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { auth } from "@/auth";
+import { authClient } from "@/auth-client";
 
 const GithubLoginButton = () => {
   return (
@@ -9,10 +9,8 @@ const GithubLoginButton = () => {
       variant="outline"
       className="flex items-center rounded-3xl text-zinc-900"
       onClick={async () => {
-        await auth.api.signInSocial({
-          body: {
-            provider: "google",
-          },
+        await authClient.signIn.social({
+          provider: "github",
         });
       }}
     >

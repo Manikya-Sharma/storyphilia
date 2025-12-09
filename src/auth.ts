@@ -1,5 +1,4 @@
 import { betterAuth } from "better-auth";
-import { createAuthClient } from "better-auth/react";
 
 export const auth = betterAuth({
   socialProviders: {
@@ -13,8 +12,6 @@ export const auth = betterAuth({
     },
   },
 });
-
-export const authClient = createAuthClient();
 
 // export const { handlers, signIn, signOut } = NextAuth({
 //   providers: [
