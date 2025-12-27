@@ -7,4 +7,4 @@ export const google_provider = createGoogleGenerativeAI({
 
 // the default model I will use
 // Alternative: Use gemini-pro, but it has more restrictions
-export const google_model = google("gemini-2.0-flash-001", );
+export const google_model = google("gemini-2.5-flash");
